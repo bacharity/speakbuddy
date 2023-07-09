@@ -27,32 +27,30 @@ struct PromoAnimatedBarGraphView: View {
     var yAxisRange: ClosedRange<Double>
     
     var body: some View {
-        GeometryReader { proxy in
-            ZStack {
-                Chart(data) {
-                    BarMark(
-                        x: .value("Label", $0.label),
-                        y: .value("Height", $0.height)
-                    )
-                    .foregroundStyle(SpeakBuddyColors.blueLinearGradient)
-                    .cornerRadius(barCornerRadius)
+        ZStack {
+            Chart(data) {
+                BarMark(
+                    x: .value("Label", $0.label),
+                    y: .value("Height", $0.height)
+                )
+                .foregroundStyle(SpeakBuddyColors.blueLinearGradient)
+                .cornerRadius(barCornerRadius)
+            }
+            .chartYScale(domain: yAxisRange)
+            .chartYAxis(.hidden)
+            .chartXAxis() {
+                AxisMarks(position: .bottom) { _ in
+                    AxisValueLabel(verticalSpacing: yAxisLabelVerticalSpacing)
+                        .font(yAxisFont)
+                        .foregroundStyle(SpeakBuddyColors.monoBlack)
                 }
-                .chartYScale(domain: yAxisRange)
-                .chartYAxis(.hidden)
-                .chartXAxis() {
-                    AxisMarks(position: .bottom) { _ in
-                        AxisValueLabel(verticalSpacing: yAxisLabelVerticalSpacing)
-                            .font(yAxisFont)
-                            .foregroundStyle(SpeakBuddyColors.monoBlack)
-                    }
-                }
-                .onAppear {
-                    for index in data.indices {
-                        withAnimation(.easeOut(duration: 0.8)
-                            .delay(Double(index) / 6.0), {
-                            data[index].height = data[index].targetHeight
-                        })
-                    }
+            }
+            .onAppear {
+                for index in data.indices {
+                    withAnimation(.easeOut(duration: 0.8)
+                        .delay(Double(index) / 6.0), {
+                        data[index].height = data[index].targetHeight
+                    })
                 }
             }
         }
